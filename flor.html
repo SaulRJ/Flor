@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Girasoles para Mamá</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            font-family: 'Georgia', serif;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        
+        .sunflowers-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .sunflower {
+            position: relative;
+            width: 120px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .flower-head {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+        
+        .center {
+            width: 30px;
+            height: 30px;
+            background-color: #5D4037;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 0 8px rgba(0,0,0,0.2);
+            position: absolute;
+        }
+        
+        .petal {
+            position: absolute;
+            width: 25px;
+            height: 60px;
+            background: linear-gradient(to bottom, #FFD600, #FFAB00);
+            border-radius: 50% 50% 0 0;
+            transform-origin: bottom center;
+            opacity: 0;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .stem {
+            width: 8px;
+            height: 120px;
+            background: linear-gradient(to right, #388E3C, #8BC34A);
+            margin-top: -10px;
+            border-radius: 5px;
+            z-index: 1;
+        }
+        
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background-color: #8BC34A;
+            border-radius: 50% 0 50% 50%;
+            z-index: 1;
+            bottom: 40px;
+            left: 50%;
+            transform: rotate(45deg);
+            opacity: 0.8;
+        }
+        
+        .leaf:nth-child(odd) {
+            left: calc(50% - 15px);
+            transform: rotate(-45deg) scaleX(-1);
+        }
+        
+        .message {
+            text-align: center;
+            font-style: italic;
+            color: #5D4037;
+            opacity: 0;
+            transition: opacity 1.5s;
+            margin-top: 30px;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .main-message {
+            font-size: clamp(24px, 6vw, 36px);
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .signature {
+            font-size: clamp(18px, 4.5vw, 24px);
+        }
+
+        @media (max-width: 500px) {
+            .sunflowers-container {
+                gap: 20px;
+            }
+            .sunflower {
+                width: 100px;
+                height: 180px;
+            }
+            .flower-head {
+                width: 80px;
+                height: 80px;
+            }
+            .petal {
+                width: 20px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sunflowers-container" id="sunflowers">
+        <!-- Girasoles se generarán con JavaScript -->
+    </div>
+    
+    <div class="message" id="message">
+        <div class="main-message">Feliz Día de las Madres</div>
+        <div class="signature">Att: Saul</div>
+    </div>
+
+    <script>
+        const container = document.getElementById('sunflowers');
+        const message = document.getElementById('message');
+        
+        // Ajustar número de girasoles según ancho de pantalla
+        const sunflowerCount = window.innerWidth < 500 ? 2 : 3;
+        
+        // Crear girasoles
+        for (let s = 0; s < sunflowerCount; s++) {
+            const sunflower = document.createElement('div');
+            sunflower.className = 'sunflower';
+            
+            const flowerHead = document.createElement('div');
+            flowerHead.className = 'flower-head';
+            
+            const center = document.createElement('div');
+            center.className = 'center';
+            
+            const stem = document.createElement('div');
+            stem.className = 'stem';
+            
+            // Crear 2 hojas
+            for (let l = 0; l < 2; l++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                sunflower.appendChild(leaf);
+            }
+            
+            flowerHead.appendChild(center);
+            sunflower.appendChild(flowerHead);
+            sunflower.appendChild(stem);
+            
+            // Crear 12 pétalos por girasol (menos para móviles)
+            const petalCount = 12;
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                flowerHead.appendChild(petal);
+                
+                // Animación de apertura escalonada
+                setTimeout(() => {
+                    petal.style.opacity = '1';
+                    petal.style.transform = `rotate(${i * (360/petalCount)}deg) translateY(-35px)`;
+                }, 100 * s + i * 30);
+            }
+            
+            container.appendChild(sunflower);
+        }
+        
+        // Mostrar el mensaje después de que las flores se abran
+        setTimeout(() => {
+            message.style.opacity = '1';
+            
+            // Animación de movimiento suave
+            setInterval(() => {
+                const flowerHeads = document.querySelectorAll('.flower-head');
+                flowerHeads.forEach((head, index) => {
+                    const rotation = Math.sin(Date.now() / 800 + index) * 8;
+                    head.style.transform = `rotate(${rotation}deg)`;
+                });
+            }, 50);
+        }, 1500);
+    </script>
+</body>
+</html>
